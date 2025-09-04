@@ -1,0 +1,6 @@
+@LMSAppFor_BincomIntermediate_HostAddress = http://localhost:5254
+
+GET {{LMSAppFor_BincomIntermediate_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
