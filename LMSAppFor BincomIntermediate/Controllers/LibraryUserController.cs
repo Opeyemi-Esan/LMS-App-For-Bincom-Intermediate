@@ -16,7 +16,7 @@ namespace LMSAppFor_BincomIntermediate.Controllers
             _libraryUserService = libraryUserService;
         }
 
-        [HttpGet("Geta_all_users")]
+        [HttpGet("all_users")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllUsers(int pageNumber = 1, int pageSize = 10)
         {
@@ -24,7 +24,7 @@ namespace LMSAppFor_BincomIntermediate.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpGet("Get_user_by_id/{userId}")]
+        [HttpGet("user_by_id/{userId}")]
         [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> GetUserById(Guid userId)
         {
@@ -32,14 +32,14 @@ namespace LMSAppFor_BincomIntermediate.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpPost("Register_user")]
+        [HttpPost("Register")]
         public async Task<IActionResult> RegisterUser([FromBody] LibraryUserRegDto libraryUserRegDto)
         {
             var response = await _libraryUserService.RegisterUser(libraryUserRegDto);
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpPost("Login_user")]
+        [HttpPost("Login")]
         public async Task<IActionResult> LoginUser([FromBody] LoginDto loginDto)
         {
             var response = await _libraryUserService.LoginUser(loginDto);

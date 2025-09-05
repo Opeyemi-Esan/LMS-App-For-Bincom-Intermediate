@@ -16,7 +16,7 @@ namespace LMSAppFor_BincomIntermediate.Controllers
         }
 
 
-        [HttpGet("get-user-borrowed-history/{userId}")]
+        [HttpGet("user-borrowed-history/{userId}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUserBorrowHistory(Guid userId)
         {
@@ -24,7 +24,7 @@ namespace LMSAppFor_BincomIntermediate.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpGet("get-book-borrowed-history/{bookId}")]
+        [HttpGet("book-borrowed-history/{bookId}")]
         [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> GetBookBorrowHistory(Guid bookId)
         {
@@ -32,7 +32,7 @@ namespace LMSAppFor_BincomIntermediate.Controllers
             return StatusCode((int)response.StatusCode,response);
         }
 
-        [HttpGet("get-active-borrows/{userId}")]
+        [HttpGet("active-borrow/{userId}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetActiveBorrows([FromRoute] Guid userId)
         {
@@ -40,7 +40,7 @@ namespace LMSAppFor_BincomIntermediate.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpGet("get-user-borrowed-history")]
+        [HttpGet("user-borrowed-history")]
         [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> GetAllActiveBorrows()
         {
