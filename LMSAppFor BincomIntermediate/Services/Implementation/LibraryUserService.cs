@@ -21,7 +21,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             _logger = logger;
         }
 
-        public async Task<Response<List<LibraryUser>>> GetUsers(int pageNumber = 1, int pageSize = 10)
+        public async Task<GetResponse<List<LibraryUser>>> GetUsers(int pageNumber = 1, int pageSize = 10)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
 
                 if(users == null)
                 {
-                    return new Response<List<LibraryUser>>
+                    return new GetResponse<List<LibraryUser>>
                     {
                         IsSuccess = false,
                         StatusCode = HttpStatusCode.NotFound,
@@ -49,7 +49,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
                     };
                 }
 
-                return new Response<List<LibraryUser>>
+                return new GetResponse<List<LibraryUser>>
                 {
                     IsSuccess = true,
                     StatusCode = HttpStatusCode.OK,
@@ -63,7 +63,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving users");
-                return new Response<List<LibraryUser>>
+                return new GetResponse<List<LibraryUser>>
                 {
                     IsSuccess = false,
                     StatusCode = HttpStatusCode.InternalServerError,

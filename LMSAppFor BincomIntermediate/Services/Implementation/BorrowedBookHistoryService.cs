@@ -1,4 +1,5 @@
 ﻿using LMSAppFor_BincomIntermediate.Data;
+using LMSAppFor_BincomIntermediate.Dtos;
 using LMSAppFor_BincomIntermediate.Models;
 using LMSAppFor_BincomIntermediate.Services.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -15,19 +16,29 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             _context = context;
             _logger = logger;
         }
-        public async Task<BookResponse<List<BorrowedBookHistory>>> GetActiveBorrows(Guid userId)
+        public async Task<Response<List<BorrowedBookHistoryDto>>> GetActiveBorrows(Guid userId)
         {
             try
             {
                 // Fetch active borrows for the specified user
                 var activeBorrows = await _context.BorrowedBookHistories
                     .Where(b => b.UserId == userId && !b.IsReturned)
-                    .Include(b => b.Book)
+                    .Select(b => new BorrowedBookHistoryDto
+                    {
+                        UserId = b.UserId,
+                        FirstName = b.User.FirstName,
+                        LastName = b.User.LastName,
+                        BookId = b.BookId,
+                        BookTitle = b.Book.Title,
+                        BorrowDate = b.BorrowDate,
+                        ReturnDate = b.IsReturned ? b.ReturnDate : null,
+                        IsReturned = b.IsReturned
+                    })
                     .OrderByDescending(h => h.BorrowDate)
                     .AsNoTracking()
                     .ToListAsync();
 
-                return new BookResponse<List<BorrowedBookHistory>>
+                return new Response<List<BorrowedBookHistoryDto>>
                 {
                     IsSuccess = true,
                     Data = activeBorrows,
@@ -37,7 +48,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while retrieving active borrows.");
-                return new BookResponse<List<BorrowedBookHistory>>
+                return new Response<List<BorrowedBookHistoryDto>>
                 {
                     IsSuccess = false,
                     Message = "An error occurred while retrieving active borrows.",
@@ -47,19 +58,26 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             }
         }
 
-        public async Task<BookResponse<List<BorrowedBookHistory>>> GetAllActiveBorrows()
+        public async Task<Response<List<BorrowedBookHistoryDto>>> GetAllActiveBorrows()
         {
             try
             {
                 // Fetch all active borrows
                 var activeBorrows = await _context.BorrowedBookHistories
                     .Where(b => !b.IsReturned)
-                    .Include(b => b.Book)
-                    .Include(b => b.User)
+                    .Select(b => new BorrowedBookHistoryDto
+                    {
+                        UserId = b.UserId,
+                        FirstName = b.User.FirstName,
+                        LastName = b.User.LastName,
+                        BookId = b.BookId,
+                        BookTitle = b.Book.Title,
+                        BorrowDate = b.BorrowDate,
+                    })
                     .OrderByDescending(h => h.BorrowDate)
                     .AsNoTracking()
                     .ToListAsync();
-                return new BookResponse<List<BorrowedBookHistory>>
+                return new Response<List<BorrowedBookHistoryDto>>
                 {
                     IsSuccess = true,
                     Data = activeBorrows,
@@ -69,7 +87,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while retrieving all active borrows.");
-                return new BookResponse<List<BorrowedBookHistory>>
+                return new Response<List<BorrowedBookHistoryDto>>
                 {
                     IsSuccess = false,
                     Message = "An error occurred while retrieving all active borrows.",
@@ -79,19 +97,26 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             }
         }
 
-        public async Task<BookResponse<List<BorrowedBookHistory>>> GetBookBorrowHistory(Guid bookId)
+        public async Task<Response<List<BorrowedBookHistoryDto>>> GetBookBorrowHistory(Guid bookId)
         {
             try
             {
                 // Fetch complete borrow history for the specified book
                 var borrowHistory = await _context.BorrowedBookHistories
                     .Where(b => b.BookId == bookId)
-                    .Include(b => b.User)
+                    .Select(b => new BorrowedBookHistoryDto
+                    {
+                        BookId = b.BookId,
+                        BookTitle = b.Book.Title,
+                        BorrowDate = b.BorrowDate,
+                        ReturnDate = b.IsReturned ? b.ReturnDate : null,
+                        IsReturned = b.IsReturned
+                    })
                     .OrderByDescending(h => h.BorrowDate)
                     .AsNoTracking()
                     .ToListAsync();
 
-                return new BookResponse<List<BorrowedBookHistory>>
+                return new Response<List<BorrowedBookHistoryDto>>
                 {
                     IsSuccess = true,
                     Data = borrowHistory,
@@ -101,7 +126,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while retrieving book borrow history.");
-                return new BookResponse<List<BorrowedBookHistory>>
+                return new Response<List<BorrowedBookHistoryDto>>
                 {
                     IsSuccess = false,
                     Message = "An error occurred while retrieving book borrow history.",
@@ -111,19 +136,27 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             }
         }
 
-        public async Task<BookResponse<List<BorrowedBookHistory>>> GetUserBorrowHistory(Guid userId)
+        public async Task<Response<List<BorrowedBookHistoryDto>>> GetUserBorrowHistory(Guid userId)
         {
             try
             {
                 // Fetch complete borrow history for the specified user
                 var borrowHistory = await _context.BorrowedBookHistories
                     .Where(b => b.UserId == userId)
-                    .Include(b => b.Book)
+                    .Select(b => new BorrowedBookHistoryDto
+                    {
+                        UserId = b.UserId,
+                        FirstName = b.User.FirstName,
+                        LastName = b.User.LastName,
+                        BorrowDate = b.BorrowDate,
+                        ReturnDate = b.IsReturned ? b.ReturnDate : null,
+                        IsReturned = b.IsReturned
+                    })
                     .OrderByDescending(h => h.BorrowDate)
                     .AsNoTracking()
                     .ToListAsync();
 
-                return new BookResponse<List<BorrowedBookHistory>>
+                return new Response<List<BorrowedBookHistoryDto>>
                 {
                     IsSuccess = true,
                     Data = borrowHistory,
@@ -133,7 +166,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while retrieving user borrow history.");
-                return new BookResponse<List<BorrowedBookHistory>>
+                return new Response<List<BorrowedBookHistoryDto>>
                 {
                     IsSuccess = false,
                     Message = "An error occurred while retrieving user borrow history.",

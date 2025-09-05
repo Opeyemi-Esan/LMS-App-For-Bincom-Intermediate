@@ -25,7 +25,7 @@ namespace LMSAppFor_BincomIntermediate.Controllers
         }
 
         [HttpGet("get-book-borrowed-history/{bookId}")]
-        [Authorize("Admin, User")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> GetBookBorrowHistory(Guid bookId)
         {
             var response = await _borrowedBookHistoryService.GetBookBorrowHistory(bookId);
@@ -33,7 +33,7 @@ namespace LMSAppFor_BincomIntermediate.Controllers
         }
 
         [HttpGet("get-active-borrows/{userId}")]
-        [Authorize("Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetActiveBorrows([FromRoute] Guid userId)
         {
             var response = await _borrowedBookHistoryService.GetActiveBorrows(userId);
@@ -41,7 +41,7 @@ namespace LMSAppFor_BincomIntermediate.Controllers
         }
 
         [HttpGet("get-user-borrowed-history")]
-        [Authorize("Admin, User")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> GetAllActiveBorrows()
         {
             var response = await _borrowedBookHistoryService.GetAllActiveBorrows();

@@ -4,6 +4,7 @@ using LMSAppFor_BincomIntermediate.Models;
 using LMSAppFor_BincomIntermediate.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using Serilog;
 
 namespace LMSAppFor_BincomIntermediate.Services.Implementation
 {
@@ -16,7 +17,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             _context = context;
             _logger = logger;
         }
-        public async Task<BookResponse<string>> AddBook(BookDto bookDto)
+        public async Task<Response<string>> AddBook(BookDto bookDto)
         {
             try
             {
@@ -26,7 +27,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
 
                 if (existingBook != null)
                 {
-                    return new BookResponse<string>
+                    return new Response<string>
                     {
                         Data = null,
                         IsSuccess = false,
@@ -46,7 +47,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
 
                 await _context.Books.AddAsync(newBook);
                 await _context.SaveChangesAsync();
-                return new BookResponse<string>
+                return new Response<string>
                 {
                     Data = "Book added successfully.",
                     IsSuccess = true,
@@ -57,7 +58,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while adding a new book.");
-                return new BookResponse<string>
+                return new Response<string>
                 {
                     Data = null,
                     IsSuccess = false,
@@ -67,14 +68,14 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             }
         }
 
-        public async Task<BookResponse<string>> DeleteBook(Guid bookId)
+        public async Task<Response<string>> DeleteBook(Guid bookId)
         {
             try
             {
                 var book = await _context.Books.FindAsync(bookId);
                 if (book == null)
                 {
-                    return new BookResponse<string>
+                    return new Response<string>
                     {
                         Data = null,
                         IsSuccess = false,
@@ -84,7 +85,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
                 }
                 _context.Books.Remove(book);
                 await _context.SaveChangesAsync();
-                return new BookResponse<string>
+                return new Response<string>
                 {
                     Data = null,
                     IsSuccess = true,
@@ -95,7 +96,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while deleting the book.");
-                return new BookResponse<string>
+                return new Response<string>
                 {
                     Data = null,
                     IsSuccess = false,
@@ -105,7 +106,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             }
         }
 
-        public async Task<BookResponse<List<AuthorGroupedBooksDto>>> GetAllBooksGroupedByAuthor(int pageNumber = 1, int pageSize = 10)
+        public async Task<GetResponse<List<AuthorGroupedBooksDto>>> GetAllBooksGroupedByAuthor(int pageNumber = 1, int pageSize = 10)
         {
             try
             {
@@ -121,7 +122,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
                     .ToListAsync();
-                return new BookResponse<List<AuthorGroupedBooksDto>>
+                return new GetResponse<List<AuthorGroupedBooksDto>>
                 {
                     Data = groupedBooks,
                     IsSuccess = true,
@@ -131,7 +132,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while retrieving books.");
-                return new BookResponse<List<AuthorGroupedBooksDto>>
+                return new GetResponse<List<AuthorGroupedBooksDto>>
                 {
                     Data = null,
                     IsSuccess = false,
@@ -141,14 +142,14 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             }
         }
 
-        public async Task<BookResponse<Book>> GetBookById(Guid bookId)
+        public async Task<Response<Book>> GetBookById(Guid bookId)
         {
             try
             {
                 var book = await _context.Books.AsNoTracking().FirstOrDefaultAsync(b => b.Id == bookId);
                 if (book == null)
                 {
-                    return new BookResponse<Book>
+                    return new Response<Book>
                     {
                         Data = null,
                         IsSuccess = false,
@@ -157,7 +158,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
                     };
                 }
 
-                return new BookResponse<Book>
+                return new Response<Book>
                 {
                     Data = book,
                     IsSuccess = true,
@@ -167,7 +168,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while retrieving the book.");
-                return new BookResponse<Book>
+                return new Response<Book>
                 {
                     Data = null,
                     IsSuccess = false,
@@ -177,7 +178,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             }
         }
 
-        public async Task<BookResponse<List<TopBorrowedBookDto>>> GetMostTopThreeBorrowedBooks()
+        public async Task<Response<List<TopBorrowedBookDto>>> GetMostTopThreeBorrowedBooks()
         {
             try
             {
@@ -204,7 +205,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
                           })
                     .ToListAsync();
 
-                return new BookResponse<List<TopBorrowedBookDto>>
+                return new Response<List<TopBorrowedBookDto>>
                 {
                     Data = mostBorrowedBooks,
                     IsSuccess = true,
@@ -214,7 +215,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while retrieving the most borrowed books.");
-                return new BookResponse<List<TopBorrowedBookDto>>
+                return new Response<List<TopBorrowedBookDto>>
                 {
                     Data = null,
                     IsSuccess = false,
@@ -224,14 +225,17 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             }
         }
 
-        public async Task<BookResponse<string>> UpdateBook(Guid bookId, BookDto bookDto)
+        public async Task<Response<string>> UpdateBook(Guid bookId, BookDto bookDto)
         {
             try
             {
-                var book = await _context.Books.FindAsync();
+                var book = await _context.Books
+                    .Include(bh => bh.BorrowHistories)
+                    .FirstOrDefaultAsync(b => b.Id == bookId);
+
                 if (book == null)
                 {
-                    return new BookResponse<string>
+                    return new Response<string>
                     {
                         Data = null,
                         IsSuccess = false,
@@ -245,9 +249,14 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
                 book.ISBN = bookDto.ISBN;
                 book.TotalCopies = bookDto.TotalCopies;
 
+                var borrowCount = book.BorrowHistories.Count(bh => !bh.IsReturned);
+
+                book.AvailableCopies = bookDto.TotalCopies - borrowCount;
+                
+
                 await _context.SaveChangesAsync();
 
-                return new BookResponse<string>
+                return new Response<string>
                 {
                     Data = null,
                     IsSuccess = true,
@@ -258,7 +267,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while Updating the book.");
-                return new BookResponse<string>
+                return new Response<string>
                 {
                     Data = null,
                     IsSuccess = false,

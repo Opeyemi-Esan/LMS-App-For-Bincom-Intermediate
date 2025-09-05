@@ -16,14 +16,14 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             _logger = logger;
         }
 
-        public async Task<BookResponse<string>> BorrowBook(Guid userId, Guid bookId)
+        public async Task<Response<string>> BorrowBook(Guid userId, Guid bookId)
         {
             try
             {
                 var book = await _context.Books.FindAsync(bookId);
                 if (book == null || book.AvailableCopies <= 0)
                 {
-                    return new BookResponse<string>
+                    return new Response<string>
                     {
                         IsSuccess = false,
                         Message = "Book not available for borrowing.",
@@ -37,7 +37,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
 
                 if (user == null)
                 {
-                    return new BookResponse<string>
+                    return new Response<string>
                     {
                         IsSuccess = false,
                         Message = "User not found.",
@@ -61,7 +61,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
 
                 await _context.SaveChangesAsync();
 
-                return new BookResponse<string>
+                return new Response<string>
                 {
                     IsSuccess = true,
                     Message = "Book borrowed successfully.",
@@ -71,7 +71,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occured");
-                return new BookResponse<string>
+                return new Response<string>
                 {
                     IsSuccess = false,
                     Message = "An error occured",
@@ -81,19 +81,19 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
         }
 
 
-        public async Task<BookResponse<string>> ReturnBook(Guid userId, Guid bookId)
+        public async Task<Response<string>> ReturnBook(Guid userId, Guid bookId)
         {
             try
             {
                 // Find the most recent borrow record for this user and book that hasn't been returned yet
-                var book = await _context.Books.FindAsync(userId);
+                var book = await _context.Books.FindAsync(bookId);
                 var borrowHistory = await _context.BorrowedBookHistories.Where(x => x.UserId == userId && x.BookId == bookId && !x.IsReturned)
                     .OrderByDescending(o => o.BorrowDate)
                     .FirstOrDefaultAsync();
 
                 if (borrowHistory == null || book == null)
                 {
-                    return new BookResponse<string>
+                    return new Response<string>
                     {
                         IsSuccess = false,
                         Message = "No active borrow record found.",
@@ -110,7 +110,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
                 borrowHistory.BorrowDate = DateTime.UtcNow;
 
                 await _context.SaveChangesAsync();
-                return new BookResponse<string>
+                return new Response<string>
                 {
                     IsSuccess = true,
                     Message = "Book returned successfully.",
@@ -120,7 +120,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occured");
-                return new BookResponse<string>
+                return new Response<string>
                 {
                     IsSuccess = false,
                     Message = "An error occured",

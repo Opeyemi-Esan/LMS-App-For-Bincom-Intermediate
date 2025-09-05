@@ -25,7 +25,7 @@ namespace LMSAppFor_BincomIntermediate.Controllers
         }
 
         [HttpGet("Get_user_by_id/{userId}")]
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> GetUserById(Guid userId)
         {
             var response = await _libraryUserService.GetUserById(userId);
@@ -47,7 +47,7 @@ namespace LMSAppFor_BincomIntermediate.Controllers
         }
 
         [HttpPut("Update_user/{userId}")]
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> UpdateUser(Guid userId, [FromBody] UpdateUserDto updateUserDto)
         {
             var response = await _libraryUserService.UpdateUser(userId, updateUserDto);
@@ -55,7 +55,7 @@ namespace LMSAppFor_BincomIntermediate.Controllers
         }
 
         [HttpDelete("Delete_user/{userId}")]
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> DeleteUser(Guid userId, [FromQuery] string password)
         {
             var response = await _libraryUserService.DeleteUser(userId, password);

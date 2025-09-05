@@ -16,7 +16,7 @@ namespace LMSAppFor_BincomIntermediate.Controllers
         }
 
         [HttpPost("borrow-book/{userId}")]
-        [Authorize(Roles = "Admin, User")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> BorrowBook(Guid userId, Guid bookId)
         {
             var response = await _borrowingService.BorrowBook(userId, bookId);
@@ -24,7 +24,7 @@ namespace LMSAppFor_BincomIntermediate.Controllers
         }
 
         [HttpPost("return-book/{userId}")]
-        [Authorize(Roles = "Admin, User")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> ReturnBook(Guid userId, Guid bookId)
         {
             var response = await _borrowingService.ReturnBook(userId, bookId);

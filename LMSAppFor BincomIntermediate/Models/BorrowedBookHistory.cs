@@ -18,7 +18,7 @@ namespace LMSAppFor_BincomIntermediate.Models
         [Required]
         public DateTime BorrowDate { get; set; } 
 
-        public DateTime ReturnDate { get; set; }
+        public DateTime? ReturnDate { get; set; }
 
         public bool IsReturned { get; set; } = false;
     }

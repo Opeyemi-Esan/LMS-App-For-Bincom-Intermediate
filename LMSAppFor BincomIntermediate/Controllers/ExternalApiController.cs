@@ -16,7 +16,7 @@ namespace LMSAppFor_BincomIntermediate.Controllers
         }
 
         [HttpGet("get-external-book-details")]
-        [Authorize(Roles = "Admin, User")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> GetBookDetails(string title)
         {
             var response = await _externalBookService.GetBookDetails(title);

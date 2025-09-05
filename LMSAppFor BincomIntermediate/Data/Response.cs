@@ -8,10 +8,5 @@ namespace LMSAppFor_BincomIntermediate.Data
         public bool IsSuccess { get; set; }
         public string Message { get; set; }
         public HttpStatusCode StatusCode { get; set; }
-
-        public int TotalCount { get; set; }
-        public int PageNumber { get; set; }
-        public int PageSize { get; set; }
-
     }
 }

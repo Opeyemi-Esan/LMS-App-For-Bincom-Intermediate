@@ -41,7 +41,7 @@ namespace LMSAppFor_BincomIntermediate.Controllers
         }
 
         [HttpGet("get-all-books-grouped-by-author")]
-        [Authorize(Roles = "Admin, User")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> GetAllBooksGroupedByAuthor([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var response = await _bookService.GetAllBooksGroupedByAuthor(pageNumber, pageSize);
@@ -49,7 +49,7 @@ namespace LMSAppFor_BincomIntermediate.Controllers
         }
 
         [HttpGet("get-book-by-id/{bookId}")]
-        [Authorize(Roles = "Admin, User")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> GetBookById([FromRoute] Guid bookId)
         {
             var response = await _bookService.GetBookById(bookId);
@@ -57,7 +57,7 @@ namespace LMSAppFor_BincomIntermediate.Controllers
         }
 
         [HttpGet("get-top-three-borrowed-books")]
-        [Authorize(Roles = "Admin, User")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> GetMostTopThreeBorrowedBooks()
         {
             var response = await _bookService.GetMostTopThreeBorrowedBooks();

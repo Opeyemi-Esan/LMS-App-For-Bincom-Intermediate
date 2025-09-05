@@ -2,7 +2,7 @@
 
 namespace LMSAppFor_BincomIntermediate.Data
 {
-    public class BookResponse<T>
+    public class GetResponse<T>
     {
         public T Data { get; set; }
         public bool IsSuccess { get; set; }
@@ -12,5 +12,6 @@ namespace LMSAppFor_BincomIntermediate.Data
         public int TotalCount { get; set; }
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
+
     }
 }

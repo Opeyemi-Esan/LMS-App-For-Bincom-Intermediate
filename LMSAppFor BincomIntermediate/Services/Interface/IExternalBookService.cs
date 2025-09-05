@@ -5,6 +5,6 @@ namespace LMSAppFor_BincomIntermediate.Services.Interface
 {
     public interface IExternalBookService
     {
-        Task<BookResponse<BookDto>> GetBookDetails(string title);
+        Task<Response<BookDto>> GetBookDetails(string title);
     }
 }

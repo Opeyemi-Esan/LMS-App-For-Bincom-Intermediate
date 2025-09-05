@@ -1,5 +1,6 @@
 ﻿using LMSAppFor_BincomIntermediate.Data;
 using LMSAppFor_BincomIntermediate.Dtos;
+using LMSAppFor_BincomIntermediate.Helper;
 using LMSAppFor_BincomIntermediate.Services.Interface;
 using System.Net;
 
@@ -9,21 +10,23 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<ExternalBookService> _logger;
+
         public ExternalBookService(HttpClient httpClient, ILogger<ExternalBookService> logger)
         {
             _httpClient = httpClient;
             _logger = logger;
         }
-        public async Task<BookResponse<BookDto>> GetBookDetails(string title)
+
+        public async Task<Response<BookDto>> GetBookDetails(string title)
         {
             try
             {
-                var apiurl = $"https://openlibrary.org/api/books?bibkeys=ISBN:{title}&format=json&jscmd=data";
-                var response = await _httpClient.GetAsync(apiurl);
+                var apiUrl = $"https://openlibrary.org/search.json?title={Uri.EscapeDataString(title)}";
+                var response = await _httpClient.GetAsync(apiUrl);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    return new BookResponse<BookDto>
+                    return new Response<BookDto>
                     {
                         Data = null,
                         IsSuccess = false,
@@ -32,11 +35,11 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
                     };
                 }
 
-                var content = await response.Content.ReadFromJsonAsync<Dictionary<string, LibraryBookDto>>();
+                var searchResult = await response.Content.ReadFromJsonAsync<OpenLibrarySearchResponse>();
 
-                if (content == null || !content.ContainsKey($"ISBN:{title}"))
+                if (searchResult == null || searchResult.Docs == null || !searchResult.Docs.Any())
                 {
-                    return new BookResponse<BookDto>
+                    return new Response<BookDto>
                     {
                         Data = null,
                         IsSuccess = false,
@@ -45,16 +48,16 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
                     };
                 }
 
-                var bookData = content[$"ISBN:{title}"];
+                var firstBook = searchResult.Docs.First();
 
                 var dto = new BookDto
                 {
-                    Title = bookData.Title,
-                    Author = bookData.Authors?.FirstOrDefault()?.Name ?? "Unknown",
-                    TotalCopies = 0 
+                    Title = firstBook.Title,
+                    Author = firstBook.Author_Name?.FirstOrDefault() ?? "Unknown",
+                    TotalCopies = 0
                 };
 
-                return new BookResponse<BookDto>
+                return new Response<BookDto>
                 {
                     Data = dto,
                     IsSuccess = true,
@@ -64,16 +67,14 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while fetching book from external API");
+                return new Response<BookDto>
                 {
-                    _logger.LogError(ex, "An error occured while fetching book from exteranl API");
-                    return new BookResponse<BookDto>
-                    {
-                        Data = null,
-                        IsSuccess = false,
-                        Message = "An error occured while fetching book from exteranl API",
-                        StatusCode = HttpStatusCode.OK,
-                    };
-                }
+                    Data = null,
+                    IsSuccess = false,
+                    Message = "An error occurred while fetching book from external API",
+                    StatusCode = HttpStatusCode.InternalServerError
+                };
             }
         }
     }
