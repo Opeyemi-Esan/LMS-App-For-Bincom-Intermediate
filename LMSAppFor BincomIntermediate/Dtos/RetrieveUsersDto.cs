@@ -15,6 +15,6 @@ namespace LMSAppFor_BincomIntermediate.Dtos
         public string Email { get; set; }
 
         [Required]
-        public Role Role { get; set; }
+        public string Role { get; set; }
     }
 }

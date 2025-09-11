@@ -131,7 +131,7 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
                     LastName = libraryUserRegDto.LastName,
                     Email = libraryUserRegDto.Email,
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword(libraryUserRegDto.Password),
-                    Role = libraryUserRegDto.Role
+                    Role = "User"
                     
                 };  
                 await _context.LibraryUsers.AddAsync(newUser);
@@ -152,6 +152,54 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
                     IsSuccess = false,
                     StatusCode = HttpStatusCode.InternalServerError,
                     Message = "An error occurred while registering the user.",
+                    Data = null
+                };
+            }
+        }
+
+        public async Task<Response<string>> RegisterAdmin(LibraryAdminRegDto libraryAdminRegDto)
+        {
+            try
+            {
+                var user = await _context.LibraryUsers.FirstOrDefaultAsync(u => u.Email == libraryAdminRegDto.Email);
+                if (user != null)
+                {
+                    return new Response<string>
+                    {
+                        IsSuccess = false,
+                        StatusCode = HttpStatusCode.BadRequest,
+                        Message = "Admin with this email already exists.",
+                        Data = null
+                    };
+                }
+
+                var newAdmin = new LibraryUser
+                {
+                    FirstName = libraryAdminRegDto.FirstName,
+                    LastName = libraryAdminRegDto.LastName,
+                    Email = libraryAdminRegDto.Email,
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(libraryAdminRegDto.Password),
+                    Role = "Admin"
+
+                };
+                await _context.LibraryUsers.AddAsync(newAdmin);
+                await _context.SaveChangesAsync();
+                return new Response<string>
+                {
+                    IsSuccess = true,
+                    StatusCode = HttpStatusCode.Created,
+                    Message = "Admin registered successfully.",
+                    Data = null
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error registering Admin");
+                return new Response<string>
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    Message = "An error occurred while registering the admin.",
                     Data = null
                 };
             }
@@ -222,7 +270,6 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
                 user.FirstName = updateUserDto.FirstName;
                 user.LastName = updateUserDto.LastName;
                 user.Email = updateUserDto.Email;
-                user.Role = updateUserDto.Role;
 
                 _context.LibraryUsers.Update(user);
                 await _context.SaveChangesAsync();

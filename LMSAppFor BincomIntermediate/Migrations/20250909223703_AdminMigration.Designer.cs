@@ -4,6 +4,7 @@ using LMSAppFor_BincomIntermediate.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LMSAppFor_BincomIntermediate.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    partial class LibraryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250909223703_AdminMigration")]
+    partial class AdminMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -124,12 +127,12 @@ namespace LMSAppFor_BincomIntermediate.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("cba1ce8e-ebe1-452d-b920-35b33d577769"),
-                            Email = "bincom@gmail.com",
-                            FirstName = "Bincom",
+                            Id = new Guid("dd6e2fe1-67a7-40bb-8ad8-bf21a600b581"),
+                            Email = "admin@lms.com",
+                            FirstName = "System",
                             IsDeleted = false,
-                            LastName = "DevCenter",
-                            PasswordHash = "$2a$11$QIOj5jvCedaZx335lJIPZ.LEQY5GYbA06jzN/TRPRF6Tei8uUYvsW",
+                            LastName = "Admin",
+                            PasswordHash = "$2a$11$xJI8btXcgRMY89DF5R4LE.fexg9WEGEhQRMndR6/zxxlkm6dsVMo6",
                             Role = "Admin"
                         });
                 });

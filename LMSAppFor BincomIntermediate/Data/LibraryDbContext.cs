@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using LMSAppFor_BincomIntermediate.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace LMSAppFor_BincomIntermediate.Data
 {
@@ -28,6 +29,20 @@ namespace LMSAppFor_BincomIntermediate.Data
                 .HasOne(b => b.Book)
                 .WithMany(bk => bk.BorrowHistories)
                 .HasForeignKey(b => b.BookId);
+
+
+            // Seed Default admin
+            modelBuilder.Entity<LibraryUser>().HasData(
+                new LibraryUser
+                {
+                    Id = Guid.NewGuid(),
+                    FirstName = "Bincom",
+                    LastName = "DevCenter",
+                    Email = "bincom@gmail.com",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Bincom11!"), 
+                    Role = "Admin"
+                }
+            );
         }
     }
 }

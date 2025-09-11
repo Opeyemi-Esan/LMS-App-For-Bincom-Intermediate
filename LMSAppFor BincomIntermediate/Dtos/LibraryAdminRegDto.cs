@@ -1,9 +1,8 @@
-﻿using LMSAppFor_BincomIntermediate.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace LMSAppFor_BincomIntermediate.Dtos
 {
-    public class LibraryUserRegDto
+    public class LibraryAdminRegDto
     {
         [Required, MaxLength(100)]
         public string FirstName { get; set; }
@@ -21,6 +20,7 @@ namespace LMSAppFor_BincomIntermediate.Dtos
         public string ConfirmPassword { get; set; }
 
         [Required]
-        public string Role { get; set; } = "User";
+        public string Role { get; set; } = "Admin";
+
     }
 }

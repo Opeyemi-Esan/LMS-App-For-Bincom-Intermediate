@@ -1,11 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
+using System.ComponentModel.DataAnnotations;
 
 namespace LMSAppFor_BincomIntermediate.Models
 {
     public class BorrowedBookHistory
     {
         [Key]
-        public Guid Id { get; set; } 
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
         public Guid UserId { get; set; }

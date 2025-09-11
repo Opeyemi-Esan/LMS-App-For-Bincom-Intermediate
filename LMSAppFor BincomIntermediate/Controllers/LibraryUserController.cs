@@ -32,10 +32,18 @@ namespace LMSAppFor_BincomIntermediate.Controllers
             return StatusCode((int)response.StatusCode, response);
         }
 
-        [HttpPost("Register")]
+        [HttpPost("Register_user")]
         public async Task<IActionResult> RegisterUser([FromBody] LibraryUserRegDto libraryUserRegDto)
         {
             var response = await _libraryUserService.RegisterUser(libraryUserRegDto);
+            return StatusCode((int)response.StatusCode, response);
+        }
+
+        [HttpPost("Register_admin")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RegisterAdmin([FromBody] LibraryAdminRegDto libraryAdminRegDto)
+        {
+            var response = await _libraryUserService.RegisterAdmin(libraryAdminRegDto);
             return StatusCode((int)response.StatusCode, response);
         }
 

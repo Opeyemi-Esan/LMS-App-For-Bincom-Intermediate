@@ -4,6 +4,7 @@ using LMSAppFor_BincomIntermediate.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LMSAppFor_BincomIntermediate.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    partial class LibraryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250909181734_FiftMigration")]
+    partial class FiftMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -110,9 +113,8 @@ namespace LMSAppFor_BincomIntermediate.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -120,18 +122,6 @@ namespace LMSAppFor_BincomIntermediate.Migrations
                         .IsUnique();
 
                     b.ToTable("LibraryUsers");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("cba1ce8e-ebe1-452d-b920-35b33d577769"),
-                            Email = "bincom@gmail.com",
-                            FirstName = "Bincom",
-                            IsDeleted = false,
-                            LastName = "DevCenter",
-                            PasswordHash = "$2a$11$QIOj5jvCedaZx335lJIPZ.LEQY5GYbA06jzN/TRPRF6Tei8uUYvsW",
-                            Role = "Admin"
-                        });
                 });
 
             modelBuilder.Entity("LMSAppFor_BincomIntermediate.Models.BorrowedBookHistory", b =>

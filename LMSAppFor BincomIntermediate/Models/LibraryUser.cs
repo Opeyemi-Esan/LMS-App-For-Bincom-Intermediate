@@ -21,16 +21,10 @@ namespace LMSAppFor_BincomIntermediate.Models
         public string PasswordHash { get; set; }
 
         [Required]
-        public Role Role { get; set; } = Role.User; 
+        public string Role { get; set; } 
 
         public bool IsDeleted { get; set; } = false;
 
         public ICollection<BorrowedBookHistory> BorrowHistory { get; set; }
-    }
-
-    public enum Role
-    {
-        Admin,
-        User
     }
 }

@@ -20,6 +20,17 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
         {
             try
             {
+
+                if (userId == Guid.Empty || bookId == Guid.Empty)
+                {
+                    return new Response<string>
+                    {
+                        IsSuccess = false,
+                        Message = "Invalid UserId or BookId.",
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
+                }
+
                 var book = await _context.Books.FindAsync(bookId);
                 if (book == null || book.AvailableCopies <= 0)
                 {
@@ -49,16 +60,18 @@ namespace LMSAppFor_BincomIntermediate.Services.Implementation
 
                 var borrowHistory = new BorrowedBookHistory
                 {
-                    BookId = bookId,
+                    Id = Guid.NewGuid(),
                     UserId = userId,
+                    BookId = bookId,
                     BorrowDate = DateTime.UtcNow,
                     IsReturned = false
                 };
 
                 // add to user’s navigation property
-                user.BorrowHistory ??= new List<BorrowedBookHistory>();
-                user.BorrowHistory.Add(borrowHistory);
+               // user.BorrowHistory ??= new List<BorrowedBookHistory>();
+               // user.BorrowHistory.Add(borrowHistory);
 
+                _context.BorrowedBookHistories.Add(borrowHistory);
                 await _context.SaveChangesAsync();
 
                 return new Response<string>
